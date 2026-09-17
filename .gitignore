@@ -1,0 +1,7 @@
+node_modules/
+frontend-nextjs/.next/
+frontend-nextjs/out/
+.hostmatic-data/
+.env
+.env.local
+*.log

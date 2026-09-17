@@ -1,0 +1,34 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: ["redis-data:/data"]
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      retries: 20
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: hostmatic-local
+      MINIO_ROOT_PASSWORD: hostmatic-local-password
+    ports:
+      - "127.0.0.1:9003:9000"
+      - "127.0.0.1:9004:9001"
+    volumes: ["object-data:/data"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 2s
+      retries: 20
+  create-bucket:
+    image: quay.io/minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "mc alias set local http://minio:9000 hostmatic-local hostmatic-local-password && mc mb --ignore-existing local/hostmatic-sites"
+volumes:
+  redis-data:
+  object-data:

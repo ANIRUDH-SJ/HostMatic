@@ -1,0 +1,17 @@
+{
+  "name": "hostmatic",
+  "version": "2.0.0",
+  "private": true,
+  "engines": { "node": ">=20.9.0" },
+  "workspaces": ["api-server", "build-server", "s3-reverse-proxy", "frontend-nextjs"],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "node -r dotenv/config api-server/index.js",
+    "dev:proxy": "node -r dotenv/config s3-reverse-proxy/index.js",
+    "dev:web": "npm run dev --workspace frontend-nextjs",
+    "build": "npm run build --workspace frontend-nextjs",
+    "lint": "npm run lint --workspace frontend-nextjs",
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": { "dotenv": "^17.2.2" }
+}
